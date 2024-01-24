@@ -65,9 +65,28 @@ function getCookie(name) {
 
 function saveHighScore() {
     const highScores = getHighScores();
-    highScores.push({ playerName, punten });
+
+    const playerId = generateUniqueId();
+
+    const existingPlayerIndex = highScores.findIndex((score) => score.playerName === playerName);
+
+    if (existingPlayerIndex !== -1) {
+        highScores[existingPlayerIndex].punten = punten;
+    } else {
+        highScores.push({ playerId, playerName, punten });
+    }
+
+    highScores.sort((a, b) => b.punten - a.punten);
+    highScores.splice(10);
+
     setCookie("highScores", JSON.stringify(highScores), 30);
 }
+
+function generateUniqueId() {
+    return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+}
+
+
 
 function getHighScores() {
     const highScoresCookie = getCookie("highScores");
@@ -212,14 +231,14 @@ function updateExplosion() {
 function scorePoint() {
     if (ball.moving) {
         punten++;
-        saveHighScore();
-        alert("Goed gedaan! Je hebt nu " + punten + " keer gescoord.");
         createExplosion();
-
         square.speed = Math.abs(square.speed) + 1;
+
+        saveHighScore();
     }
     resetBall();
 }
+
 
 
 function bepaalNiveau(punten) {
@@ -256,6 +275,63 @@ function resetLevelAndScore() {
     resetBall();
 }
 
+// ...
+
+function drawHighScores() {
+    const highScores = getHighScores();
+    ctx.font = "20px Arial";
+    ctx.fillStyle = "white";
+    ctx.fillText("High Scores:", canvasWidth - 200, 30);
+
+    for (let i = 0; i < highScores.length; i++) {
+        const score = highScores[i];
+        const yPosition = 60 + i * 25;
+        ctx.fillText(`${i + 1}. ${score.playerName}: ${score.punten}`, canvasWidth - 200, yPosition);
+    }
+}
+
+// ...
+
+function tekenNiveau() {
+    const huidigNiveau = bepaalNiveau(punten);
+    ctx.font = "20px Arial";
+    ctx.fillStyle = "white";
+    ctx.fillText("Level: " + huidigNiveau, canvasWidth - 200, 60);
+}
+
+// ...
+
+// ...
+
+function saveHighScore() {
+    const highScores = getHighScores();
+    highScores.push({ playerName, punten });
+    highScores.sort((a, b) => b.punten - a.punten);
+    highScores.splice(10);
+
+    console.log("Nieuwe highScores:", highScores);
+
+    setCookie("highScores", JSON.stringify(highScores), 30);
+}
+
+
+// ...
+
+function drawHighScores() {
+    const highScores = getHighScores();
+    ctx.font = "20px Arial";
+    ctx.fillStyle = "white";
+    ctx.fillText("High Scores:", 10, 90);
+
+    for (let i = 0; i < highScores.length; i++) {
+        const score = highScores[i];
+        const yPosition = 120 + i * 30;
+        ctx.fillText(`${i + 1}. ${score.playerName}: ${score.punten}`, 10, yPosition);
+    }
+}
+
+// ...
+
 function animate() {
     updateSquare();
     updateBall();
@@ -266,7 +342,7 @@ function animate() {
     drawExplosion();
     drawScoreboard();
     checkGoal();
-
+    drawHighScores();
     tekenNiveau();
 
     requestAnimationFrame(animate);
