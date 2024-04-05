@@ -275,7 +275,6 @@ function resetLevelAndScore() {
     resetBall();
 }
 
-// ...
 
 function drawHighScores() {
     const highScores = getHighScores();
@@ -290,7 +289,6 @@ function drawHighScores() {
     }
 }
 
-// ...
 
 function tekenNiveau() {
     const huidigNiveau = bepaalNiveau(punten);
@@ -299,9 +297,7 @@ function tekenNiveau() {
     ctx.fillText("Level: " + huidigNiveau, canvasWidth - 200, 60);
 }
 
-// ...
 
-// ...
 
 function saveHighScore() {
     const highScores = getHighScores();
@@ -315,7 +311,6 @@ function saveHighScore() {
 }
 
 
-// ...
 
 function drawHighScores() {
     const highScores = getHighScores();
